@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,8 +23,9 @@ public class UserSyncChangeLog {
     private final AtomicInteger successfulUpdatesCounter = new AtomicInteger();
 
     @ChangeSet(order = "003", id = "setFirstAndLastNameToUsers", author = "Alexander Lazarchuk", runAlways = true)
-    public void setFirstAndLastNameToUsers(MongockTemplate mongockTemplate) {
+    public void setFirstAndLastNameToUsers(MongockTemplate mongockTemplate) throws ParseException {
         log.info("Order-ChangeSet: {} | Start Users-Sync to Database", "003");
+
         var query = new Query(
                 where("fullName")
                         .ne(null)
@@ -55,6 +57,7 @@ public class UserSyncChangeLog {
 
             users = mongockTemplate.find(query, User.class);
         }
+
         log.info("Order-ChangeSet: {} | Finish Users-Sync to Database", "003");
     }
 

@@ -6,9 +6,8 @@ import com.programming.techie.mongo.model.User;
 import com.programming.techie.mongo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
+import java.util.Arrays;
 
 @ChangeLog
 @Slf4j
@@ -17,27 +16,19 @@ public class UserInitChangeLog {
     @ChangeSet(order = "002", id = "userInitDatabase", author = "Alexander Lazarchuk")
     public void userInitDatabase(UserRepository userRepository) {
         log.info("Order-ChangeSet: {} | Start Users-Init to Database", "002");
-        List<User> users = new ArrayList<>();
-        users.add(createNewUser("johndoe", "John Doe", System.currentTimeMillis()));
-        users.add(createNewUser("maks", "Maksym Vakulenko", System.currentTimeMillis()));
-        users.add(createNewUser("olexandr", "Oleksandr Vorobei", System.currentTimeMillis()));
-        users.add(createNewUser("rostik", "Rostyslav Shcherbyna", System.currentTimeMillis()));
-        users.add(createNewUser("serega", "Serhii Martyniuk", System.currentTimeMillis()));
-        users.add(createNewUser("katya", "Katerina Podolska", System.currentTimeMillis()));
-        users.add(createNewUser("oksana", "Oksana Perekipska", System.currentTimeMillis()));
-        users.add(createNewUser("yarik", "Yaroslav Soboliev", System.currentTimeMillis()));
-        users.add(createNewUser("dima", "Dmitriy Khmarskyi", System.currentTimeMillis()));
 
+        var users = Arrays.asList(
+                User.builder().username("johndoe").fullName("John Doe").updatedAt(Instant.now()).build(),
+                User.builder().username("maks").fullName("Maksym Vakulenko").updatedAt(Instant.now()).build(),
+                User.builder().username("olexandr").fullName("Oleksandr Vorobei").updatedAt(Instant.now()).build(),
+                User.builder().username("rostik").fullName("Rostyslav Shcherbyna").updatedAt(Instant.now()).build(),
+                User.builder().username("serega").fullName("Serhii Martyniuk").updatedAt(Instant.now()).build(),
+                User.builder().username("katya").fullName("Katerina Podolska").updatedAt(Instant.now()).build(),
+                User.builder().username("oksana").fullName("Oksana Perekipska").updatedAt(Instant.now()).build(),
+                User.builder().username("yarik").fullName("Yaroslav Soboliev").updatedAt(Instant.now()).build(),
+                User.builder().username("dima").fullName("Dmitriy Khmarskyi").updatedAt(Instant.now()).build());
         userRepository.insert(users);
+
         log.info("Order-ChangeSet: {} | Finish Users-Init to Database", "002");
-    }
-
-    private User createNewUser(String username, String fullName, long updatedAt) {
-        var user = new User();
-        user.setUsername(username);
-        user.setFullName(fullName);
-        user.setUpdatedAt(new Date(updatedAt));
-
-        return user;
     }
 }
