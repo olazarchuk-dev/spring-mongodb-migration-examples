@@ -21,5 +21,5 @@ public class User {
     private String fullName;
     private String firstName;
     private String lastName;
-    private Date dob;
+    private Date updatedAt;
 }

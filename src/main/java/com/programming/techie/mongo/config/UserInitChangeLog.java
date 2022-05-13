@@ -32,11 +32,11 @@ public class UserInitChangeLog {
         log.info("Order-ChangeSet: {} | Finish Users-Init to Database", "002");
     }
 
-    private User createNewUser(String username, String fullName, long dob) {
+    private User createNewUser(String username, String fullName, long updatedAt) {
         var user = new User();
         user.setUsername(username);
         user.setFullName(fullName);
-        user.setDob(new Date(dob));
+        user.setUpdatedAt(new Date(updatedAt));
 
         return user;
     }
