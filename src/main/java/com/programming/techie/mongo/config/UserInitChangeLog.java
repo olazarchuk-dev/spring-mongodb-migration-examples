@@ -4,16 +4,19 @@ import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.programming.techie.mongo.model.User;
 import com.programming.techie.mongo.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 @ChangeLog
-public class DatabaseUserInitChangeLog {
+@Slf4j
+public class UserInitChangeLog {
 
     @ChangeSet(order = "002", id = "userInitDatabase", author = "Alexander Lazarchuk")
     public void userInitDatabase(UserRepository userRepository) {
+        log.info("Order-ChangeSet: {} | Start Users-Init to Database", "002");
         List<User> users = new ArrayList<>();
         users.add(createNewUser("johndoe", "John Doe", System.currentTimeMillis()));
         users.add(createNewUser("maks", "Maksym Vakulenko", System.currentTimeMillis()));
@@ -26,6 +29,7 @@ public class DatabaseUserInitChangeLog {
         users.add(createNewUser("dima", "Dmitriy Khmarskyi", System.currentTimeMillis()));
 
         userRepository.insert(users);
+        log.info("Order-ChangeSet: {} | Finish Users-Init to Database", "002");
     }
 
     private User createNewUser(String username, String fullName, long dob) {

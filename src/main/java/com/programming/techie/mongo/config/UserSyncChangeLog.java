@@ -4,6 +4,8 @@ import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import com.programming.techie.mongo.model.User;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -14,14 +16,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @ChangeLog
-public class DatabaseUserSyncChangeLog {
+@Slf4j
+public class UserSyncChangeLog {
 
     AtomicInteger successfulUserUpdatesCounter = new AtomicInteger();
 
     @ChangeSet(order = "003", id = "setFirstAndLastNameToUsers", author = "Alexander Lazarchuk")
     public void setFirstAndLastNameToUsers(MongockTemplate mongockTemplate) {
-        Query query = new Query(
-                where("fullName").ne(null)
+        log.info("Order-ChangeSet: {} | Start Users-Sync to Database", "003");
+        var query = new Query(
+                where("fullName")
+                        .ne(null)
                         .andOperator(where("firstName").is(null), where("lastName").is(null))
         );
 
@@ -31,13 +36,13 @@ public class DatabaseUserSyncChangeLog {
         query.limit(3); // set after counting all users to avoid always getting 100 as the maximum number of users
 
         List<User> users = mongockTemplate.find(query, User.class);
-        while(0 < users.size()) {
+        while (!users.isEmpty()) {
             users.forEach(user -> {
                 try {
-                    Criteria criteria = where("_id").is(user.getId());
-                    String[] names = splitNamesForUser(user);
-                    String firstName = names[0];
-                    String lastName = names[1];
+                    var criteria = where("_id").is(user.getId());
+                    var names = splitNamesForUser(user);
+                    var firstName = names[0];
+                    var lastName = names[1];
                     Update update = new Update()
                             .set("firstName", firstName)
                             .set("lastName", lastName);
@@ -50,12 +55,11 @@ public class DatabaseUserSyncChangeLog {
 
             users = mongockTemplate.find(query, User.class);
         }
+        log.info("Order-ChangeSet: {} | Finish Users-Sync to Database", "003");
     }
 
     private String[] splitNamesForUser(User user) throws ParseNameException {
-        if (user.getFullName() == null
-                || user.getFullName().isEmpty()
-                || !user.getFullName().contains(" ")) {
+        if (StringUtils.isEmpty(user.getFullName()) || !user.getFullName().contains(" ")) {
             throw new ParseNameException("Failed to parse the user's name");
         }
         return user.getFullName().split(" ");
