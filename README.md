@@ -5,6 +5,14 @@
 * `Official Mongock Docs`: https://docs.mongock.io
 * `Repo`: https://github.com/SaiUpadhyayula/spring-boot-mongodb-tutorial
 
+- SDK: `Java-15`
+- Framework: `Spring Boot`
++ Database: `MongoDB`
+  - Host: `localhost`
+  - Port: `27017`
+  - Collection: `expense-tracker`
+  - Document: `expense`
+
 1. Just open terminal and type this command
    `sudo chmod 666 /var/run/docker.sock`
 2. Make sure your Docker engine is up and running

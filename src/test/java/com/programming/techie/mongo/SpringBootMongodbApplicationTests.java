@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
-class SpringBootMongodbTutorialApplicationTests {
+class SpringBootMongodbApplicationTests {
 
     static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.4.2");
 
