@@ -58,6 +58,7 @@ public class UserSyncChangeLog {
             users = mongockTemplate.find(query, User.class);
         }
 
+        log.info("Order-ChangeSet: {} | Successful count update = {} users", "003", successfulUpdatesCounter);
         log.info("Order-ChangeSet: {} | Finish Users-Sync to Database", "003");
     }
 
