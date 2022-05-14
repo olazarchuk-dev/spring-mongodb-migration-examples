@@ -13,6 +13,17 @@
   - Collection: `expense-tracker`
   - Document: `expense`
 
+```js
+db.createCollection("migration_users")
+```
+```js
+db.migration_users.find({
+    updatedAt: {
+        $lt: ISODate("2022-05-14T00:21:57.343Z")
+    }
+})
+```
+
 1. Just open terminal and type this command
    `sudo chmod 666 /var/run/docker.sock`
 2. Make sure your Docker engine is up and running
