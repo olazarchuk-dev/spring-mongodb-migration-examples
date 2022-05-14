@@ -26,10 +26,10 @@ public class UserSyncChangeLog {
 
     private final AtomicInteger successfulUpdatesCounter = new AtomicInteger();
 
-    @Value("${app.sync.one_per_query_limit}")
+    @Value("${app.sync.one-per-query-limit}")
     public int onePerQueryLimit;
 
-    @Value("${app.sync.update_expiration_seconds}")
+    @Value("${app.sync.update-expiration-seconds}")
     public int updateExpirationSeconds = 30;
 
     @ChangeSet(order = "002", id = "userInitDatabase", author = "Alexander Lazarchuk")
