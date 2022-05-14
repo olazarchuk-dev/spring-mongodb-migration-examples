@@ -8,6 +8,7 @@ import com.programming.techie.mongo.model.User;
 import com.programming.techie.mongo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
@@ -48,10 +49,10 @@ public class UserSyncChangeLog {
     public void setFirstAndLastNameToUsers(MongockTemplate mongockTemplate) {
         log.info("Order-ChangeSet: {} | Start Users-Sync to Database", "003");
 
-        var query = new Query(
-                where("fullName")
-                        .ne(null)
-                        .andOperator(where("firstName").is(null), where("lastName").is(null)));
+//        Criteria toDate = Criteria.where("updatedAt").lt(Instant.parse("2022-05-14T00:21:57.343Z"));
+        Criteria toDate = Criteria.where("updatedAt").lt(Instant.now().minusSeconds(30));
+        var query = Query.query(
+                new Criteria().andOperator(toDate));
 
         query.fields().include("_id", "fullName");
 
@@ -68,7 +69,8 @@ public class UserSyncChangeLog {
                     var lastName = names[1];
                     Update update = new Update()
                             .set("firstName", firstName)
-                            .set("lastName", lastName);
+                            .set("lastName", lastName)
+                            .set("updatedAt", Instant.now());
                     mongockTemplate.findAndModify(new Query(criteria), update, User.class);
                     successfulUpdatesCounter.getAndIncrement();
                 } catch (Exception | ParseNameException ex) {
