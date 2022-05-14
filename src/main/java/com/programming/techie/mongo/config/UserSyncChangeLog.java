@@ -8,6 +8,7 @@ import com.programming.techie.mongo.model.User;
 import com.programming.techie.mongo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -23,8 +24,13 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 @Slf4j
 public class UserSyncChangeLog {
 
-    public final int QUERY_LIMIT = 3; // set after counting all users to avoid always getting 100 as the maximum number of users
     private final AtomicInteger successfulUpdatesCounter = new AtomicInteger();
+
+    @Value("${app.sync.one_per_query_limit}")
+    public int onePerQueryLimit;
+
+    @Value("${app.sync.update_expiration_seconds}")
+    public int updateExpirationSeconds = 30;
 
     @ChangeSet(order = "002", id = "userInitDatabase", author = "Alexander Lazarchuk")
     public void userInitDatabase(UserRepository userRepository) {
@@ -49,15 +55,14 @@ public class UserSyncChangeLog {
     public void setFirstAndLastNameToUsers(MongockTemplate mongockTemplate) {
         log.info("Order-ChangeSet: {} | Start Users-Sync to Database", "003");
 
-//        Criteria toDate = Criteria.where("updatedAt").lt(Instant.parse("2022-05-14T00:21:57.343Z"));
-        Criteria toDate = Criteria.where("updatedAt").lt(Instant.now().minusSeconds(30));
+        Criteria toDate = Criteria.where("updatedAt").lt( Instant.now().minusSeconds(updateExpirationSeconds) );
         var query = Query.query(
                 new Criteria().andOperator(toDate));
 
         query.fields().include("_id", "fullName");
 
         mongockTemplate.count(query, User.class);
-        query.limit(QUERY_LIMIT);
+        query.limit(onePerQueryLimit);
 
         List<User> users = mongockTemplate.find(query, User.class);
         while (!users.isEmpty()) {
