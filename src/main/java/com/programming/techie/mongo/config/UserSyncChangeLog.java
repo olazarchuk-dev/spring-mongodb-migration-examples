@@ -34,7 +34,7 @@ public class UserSyncChangeLog {
 
     @ChangeSet(order = "002", id = "userInitDatabase", author = "Alexander Lazarchuk")
     public void userInitDatabase(UserRepository userRepository) {
-        log.info("Order-ChangeSet: {} | Start Users-Init to Database", "002");
+        log.info("Order-ChangeSet | Start Users-Init to Database");
 
         var users = Arrays.asList(
                 User.builder().username("johndoe").fullName("John Doe").updatedAt(Instant.now()).build(),
@@ -48,12 +48,12 @@ public class UserSyncChangeLog {
                 User.builder().username("dima").fullName("Dmitriy Khmarskyi").updatedAt(Instant.now()).build());
         userRepository.insert(users);
 
-        log.info("Order-ChangeSet: {} | Finish Users-Init to Database", "002");
+        log.info("Order-ChangeSet | Finish Users-Init to Database");
     }
 
     @ChangeSet(order = "003", id = "setFirstAndLastNameToUsers", author = "Alexander Lazarchuk", runAlways = true)
     public void setFirstAndLastNameToUsers(MongockTemplate mongockTemplate) {
-        log.info("Order-ChangeSet: {} | Start Users-Sync to Database", "003");
+        log.info("Order-ChangeSet | Start Users-Sync to Database");
 
         Criteria toDate = Criteria.where("updatedAt").lt( Instant.now().minusSeconds(updateExpirationSeconds) );
         var query = Query.query(
@@ -86,8 +86,8 @@ public class UserSyncChangeLog {
             users = mongockTemplate.find(query, User.class);
         }
 
-        log.info("Order-ChangeSet: {} | Successful count update = {} user(s)", "003", successfulUpdatesCounter);
-        log.info("Order-ChangeSet: {} | Finish Users-Sync to Database", "003");
+        log.info("Order-ChangeSet | Successful count update = {} user(s)", successfulUpdatesCounter);
+        log.info("Order-ChangeSet | Finish Users-Sync to Database");
     }
 
     private String[] splitNamesForUser(User user) throws ParseNameException {
